@@ -48,7 +48,7 @@ def fsk(bits, freq0, freq1, amp, bitrate):
 def qam8(bits, freq0, amp, bitrate) :
     costelacao = {"000": (1,1), "001": (1,-1), "010": (-1,1), "011": (-1,-1), "100": (math.sqrt(2), 0), "101": (-math.sqrt(2), 0), "110": (0, math.sqrt(2)), "111": (0, -math.sqrt(2))}
 
-    fs = 100 * freq0 # Taxa de amostragem
+    fs = 10 * freq0 # Taxa de amostragem
     t_bit = 1 / bitrate # Duração de um bit em segundos
     t_simbolo = t_bit * 3
     amostras_por_simbolo = int(fs * t_simbolo)
@@ -82,7 +82,7 @@ def configurar_grafico_analogico(titulo, x, y , cor):
 # Plotar Grafico da modulação Analogica
 def grafico_analogico():
     #bits = "0101000001001010111010101010101"
-    bits = "0001"
+    bits = "010001010111010100100000011000010111"
 
     bitrate = 1000
     freq0 = 2 * 10 ** 3
