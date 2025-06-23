@@ -1,0 +1,12 @@
+BITRATE = 1000
+FREQ0 = 2000
+FREQ1 = 8000
+AMPLITUDE = 1
+
+ASK = "ASK"
+FSK = "FSK"
+QAM8 = "8-QAM"
+
+NRZ_P = "NRZ_Polar"
+MANCHESTER = "Manchester"
+BIPOLAR = "Bipolar" 

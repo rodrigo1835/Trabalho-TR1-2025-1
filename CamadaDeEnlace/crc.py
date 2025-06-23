@@ -11,8 +11,8 @@ O CRC-32 IEEE 802.3 usa:
 # Polinômio padrão do CRC-32 (forma normal, não refletida)
 polinomio = "100000100110000010001110110110111"  # 0x04C11DB7
 
-# EDC (Error Detection Code) inicial: 32 bits zerados
-EDC = "0" * 32
+# EDC (Error Detection Code) inicial: (tamanho do polinomio - 1) bit
+EDC = "1" * (len(polinomio) - 1)
 
 def confere_bytes(string):
     """
@@ -38,11 +38,12 @@ def xor(a, b):
         xor += str(int(a[i]) ^ int(b[i]))
     return xor
 
-def div_crc(dividendo, divisor):
+def div_crc(dividendo, divisor = polinomio):
     """
     Executa a divisão polinomial em módulo 2 (sem transporte) para cálculo do CRC.
     Retorna o resto da divisão, que é o CRC bruto.
     """
+    dividendo = dividendo + EDC
     divisor_len = len(divisor)
     dividendo_temp = dividendo[:divisor_len]
     resto_dividendo = dividendo[divisor_len:]
@@ -64,12 +65,14 @@ def div_crc(dividendo, divisor):
 
     return dividendo_temp[1:]  # Retorna o CRC (resto), descartando o bit mais significativo
 
+
+'''
 # =======================
 # Processamento principal
 # =======================
 
 # 1. Mensagem original (em bits)
-mensagem = "1000101010111101"
+mensagem = "111000"
 
 # 2. Garante que a mensagem tenha múltiplos de 8 bits
 mensagem = confere_bytes(mensagem)
@@ -108,3 +111,4 @@ print("Mensagem refletida:            ", mensagem_refletida)
 print("CRC bruto:                     ", crc)
 print("CRC refletido + complemento:   ", crc_final)
 print("Verificação CRC no receptor:   ", verificacao)
+'''
