@@ -5,16 +5,18 @@ def contagem_de_quadros(mensagem):
     nova_mensagem = m[2:].zfill(16) + mensagem
     return nova_mensagem
 
-def flags_com_insercao(mensagem):
-    novaMensagem = ""
-    for i in range(0, len(mensagem)):
-        if mensagem[i] == "@":
-            novaMensagem += "/@"
-        else:
-            novaMensagem += mensagem[i]
-    novaMensagem = "@" + novaMensagem + "@"
+def flags_com_insercao_bytes(mensagem):
+    nova_mensagem = ""
+    for i in range(0, len(mensagem), 8):
+        byte = mensagem[i:i+8]
         
-    return novaMensagem
+        if byte == "01000000":
+            nova_mensagem += "0010111101000000"
+        else:
+            nova_mensagem += byte
+    nova_mensagem = "01000000" + nova_mensagem + "01000000"
+    
+    return nova_mensagem
 
 def flags_com_insercao_bits(mensagem):
     novaMensagem = "" 

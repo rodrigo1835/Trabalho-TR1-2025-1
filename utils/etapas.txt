@@ -1,0 +1,19 @@
+[Texto] 
+   ↓
+[Codificação para bits (ASCII)]
+   ↓
+[CRC ou controle de erro]
+   ↓
+[Enquadramento (bit/byte stuffing ou contagem)]
+   ↓
+[Modulação do sinal (camada física)]
+   ↓
+[Simulação do canal (ruído? erro?)]
+   ↓
+[Demodulação]
+   ↓
+[Desenquadramento]
+   ↓
+[Verificação do CRC]
+   ↓
+[Decodificação para texto]
