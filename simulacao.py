@@ -1,36 +1,47 @@
-from CamadaFisica.modulacao_banda_base import *
-from CamadaFisica.modulacao_portadora import *
-from CamadaDeEnlace.enquadramento import *
-from CamadaDeEnlace.paridade import bit_paridade
-from CamadaDeEnlace.crc import div_crc
-from utils.graficos import grafico_banda_base, grafico_portadora
-from utils.conversor import frase_para_bits
-from utils.config import *
+import threading
+from Interface.receptor_interface import criar_interface_receptor
+from Interface.transmissor_interface import criar_interface_transmissor, get_dados_interface
+from Servidor.receptor import receber, receptor
+from Servidor.transmissor import enviar, transmissor
 
-mensagem = input("Sua mensagem: ")
-bit_mensagem = frase_para_bits(mensagem)
+recebido_var = None
+erro_var = None
 
-mensagem_erro = div_crc(bit_mensagem)
-mensagem_enquadrada = contagem_de_quadros(mensagem_erro)
-print(mensagem_erro)
-print(mensagem_enquadrada)
+def iniciar_transmissor():
+    janela_transmissor = criar_interface_transmissor()
+    janela_transmissor.mainloop()
 
+def iniciar_receptor():
+    global janela_receptor, recebido_var, enquadramento_var, erro_var, modulacao_var
 
-'''
-x = list(range(len(mensagem_modulada)))
-y = mensagem_modulada
-grafico_banda_base(x,y, MANCHESTER)
+    janela_receptor, recebido_var, enquadramento_var, erro_var, modulacao_var = criar_interface_receptor()
+    janela_receptor.mainloop()
 
-sinal_ask = ask(bit_mensagem, FREQ0, AMPLITUDE, BITRATE)
-sinal_fsk = fsk(bit_mensagem, FREQ0, FREQ1, AMPLITUDE, BITRATE)
-sinal_qam8 = qam8(bit_mensagem, FREQ0, AMPLITUDE, BITRATE)
+def fluxo_comunicacao():
+    transmissor_thread.join()
+    mensagem, info = get_dados_interface()
 
-grafico_portadora(bit_mensagem, BITRATE, sinal_ask, ASK)
-grafico_portadora(bit_mensagem, BITRATE, sinal_fsk, FSK)
-grafico_portadora(bit_mensagem, BITRATE, sinal_qam8, QAM8)
+    if not mensagem or not info:
+        print("Dados Inválidos.")
+        return
 
-bits = "010111"
-x = list(range(len(nrz_polar(bits))))
-y = nrz_polar(bits)
-grafico_banda_base(x, y, "NRZ_Polar")
-'''
+    # Inicia receptor socket primeiro se não da erro se inciar o transmissor primeiro
+    def escutar():
+        dados_recebidos = receber()
+        receptor(dados_recebidos, info, recebido_var, erro_var, janela_receptor)
+
+    receptor_socket_thread = threading.Thread(target=escutar)
+    receptor_socket_thread.start()
+
+    sinal = transmissor(mensagem, info)
+    enviar(sinal)
+
+    receptor_socket_thread.join()
+
+transmissor_thread = threading.Thread(target=iniciar_transmissor)
+receptor_thread = threading.Thread(target=iniciar_receptor)
+fluxo_thread = threading.Thread(target=fluxo_comunicacao)
+
+transmissor_thread.start()
+receptor_thread.start()
+fluxo_thread.start()

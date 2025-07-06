@@ -19,23 +19,25 @@ def flags_com_insercao_bytes(mensagem):
     return nova_mensagem
 
 def flags_com_insercao_bits(mensagem):
-    novaMensagem = "" 
+    novaMensagem = ""
     qtd_uns = 0
 
-    for i in range(0, len(mensagem)):
-        if(mensagem[i] == "1"):
+    for i in range(len(mensagem)):
+        bit = mensagem[i]
+        novaMensagem += bit
+
+        if bit == "1":
             qtd_uns += 1
-            if(qtd_uns == 5):
-                novaMensagem += "0"
+            if qtd_uns == 5:
+                # Só insere o 0 se o próximo bit for 1 (evita remover 0 legítimo)
+                if i + 1 < len(mensagem) and mensagem[i + 1] == "1":
+                    novaMensagem += "0"
                 qtd_uns = 0
-            novaMensagem += mensagem[i]
-
         else:
-            novaMensagem += mensagem[i]
-        
-    novaMensagem = "01111110" + novaMensagem + "01111110"
+            qtd_uns = 0
 
-    return novaMensagem
+    return "01111110" + novaMensagem + "01111110"
+
 
 
 

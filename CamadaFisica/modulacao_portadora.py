@@ -16,7 +16,7 @@ def ask(bits, freq, amp, bitrate):
     
     sinal = []
     for bit in bits:
-        if bit == '1':
+        if bit == 1:
             for t in tempo:
                 # sinal(t) = A.Sen(2πft)
                 sinal.append(amp * math.sin(2 * math.pi * freq * t))
@@ -35,7 +35,7 @@ def fsk(bits, freq0, freq1, amp, bitrate):
     
     sinal = []
     for bit in bits:
-        if bit == '1':
+        if bit == 1:
             for t in tempo:
                 # sinal(t) = A.Sen(2πft)
                 sinal.append(amp * math.sin(2 * math.pi * freq0 * t))
@@ -46,6 +46,7 @@ def fsk(bits, freq0, freq1, amp, bitrate):
     return sinal
 
 def qam8(bits, freq0, amp, bitrate) :
+    bits = ''.join(str(bit) for bit in bits)
     costelacao = {"000": (1,1), "001": (1,-1), "010": (-1,1), "011": (-1,-1), "100": (math.sqrt(2), 0), "101": (-math.sqrt(2), 0), "110": (0, math.sqrt(2)), "111": (0, -math.sqrt(2))}
 
     fs = 10 * freq0 # Taxa de amostragem
@@ -62,6 +63,7 @@ def qam8(bits, freq0, amp, bitrate) :
     sinal = []
     for i in range(0, len(bits), 3):
         agrupamento_bits = bits[i:i+3]
+        print(f"Agrupamento de bits: {agrupamento_bits}")
         simbolo = costelacao[agrupamento_bits]
         for t in tempo:
             I, Q = simbolo

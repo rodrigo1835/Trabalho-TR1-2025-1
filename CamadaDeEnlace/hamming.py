@@ -3,9 +3,7 @@ import math
 haming = ["P1","P2","M3","P4","M5","M6","M7","P8","M9","M10","M11"]
 posi = [1,2,4,8]
 
-def calc_paridade(palavra, pos_paridade):        
-    dic_paridade = {}
-    
+def calc_paridade(palavra, pos_paridade):            
     temp_palavra = palavra[:]
     
     for pos in pos_paridade:
@@ -41,13 +39,48 @@ def hamming(mensagem):
             nova_palavra[i - 1] = int(mensagem[j])
             j += 1
     
+    palavra_final = ''.join(str(bit) for bit in calc_paridade(nova_palavra, pos_paridade))
     
-    palavra_final = calc_paridade(nova_palavra, pos_paridade)
+    return palavra_final
+
+def verificar_paridade_hamming(palavra):
+    tamanho_palavra = len(palavra)
+    palavra = [int(bit) for bit in palavra] # Transforma string para vetor
+
+    pos_paridade = []
+    for i in range(1, tamanho_palavra + 1):
+        if math.log2(i).is_integer():
+            pos_paridade.append(i)
+
+    reverificar_ham = calc_paridade(palavra, pos_paridade)
+
+    paridade_n = 0 # Paridade na posição n [P1,P2...]
+    erro_posicao = 0
+
+    for pos in pos_paridade:
+        i = pos - 1
+        paridade_n = reverificar_ham[i] * pos
+        erro_posicao += paridade_n
+
+    erro = 1
+    if erro_posicao != 0 and erro_posicao > tamanho_palavra - 1:
+        palavra[erro_posicao - 1] ^= 1
+        erro = 0
     
-    return palavra_final, nova_palavra
-
-
+    palavra_sem_paridade = ""
+    for i in range(1, tamanho_palavra + 1):
+        if not math.log2(i).is_integer():
+            palavra_sem_paridade += str(palavra[i - 1])
+    
+    return palavra_sem_paridade, erro
+    
+            
+    
 # Entradas
 dados_bits = ["010", "111", "001", "1010", "0001"]
-palavra_ham,nova_palavra = hamming(dados_bits[0])
-print(palavra_ham, nova_palavra)
+'''
+palavra_ham = hamming(dados_bits[0])
+print(palavra_ham)
+'''
+palavra_erro = verificar_paridade_hamming("01001010001001110111101100100010110010011010010110011101101111")
+print(palavra_erro)
